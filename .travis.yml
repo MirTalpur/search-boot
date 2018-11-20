@@ -19,7 +19,6 @@ before_deploy:
   - docker ps -a
   - docker images
   - docker tag search-boot:latest $DOCKER_USERNAME/search-boot:${git_sha}
-  - docker push $DOCKER_USERNAME/search-boot:latest
 deploy:
   provider: script
   script: docker push $DOCKER_USERNAME/search-boot:${git_sha}
