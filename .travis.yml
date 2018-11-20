@@ -1,16 +1,27 @@
-sudo: true
+sudo: required
 dist: trusty
+language: java
+services:
+  - docker
 
-jobs:
-  include:
-    - stage: build docker image
-      script:
-      - echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USERNAME" --password-stdin
-      - docker build -t search-boot:latest .
-      - docker run -d -p 127.0.0.1:8080:8080 search-boot:latest /bin/sh -c "curl localhost:8080/app/health"
-      - docker ps -a
-      - docker images
-    - stage: Push to Docker Hub
-      if: branch = master
-        - docker tag search-boot:latest $DOCKER_USERNAME/search-boot:latest
-        - docker push $DOCKER_USERNAME/search-boot:latest
+before_script:
+  - echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USERNAME" --password-stdin
+script:
+  - docker build -t search-boot:latest .
+  - docker run -d -p 127.0.0.1:8080:8080 search-boot:latest /bin/sh -c "curl localhost:8080/app/health"
+  - docker ps -a
+  - docker images
+
+before_deploy:
+  - echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USERNAME" --password-stdin
+  - docker build -t search-boot:latest .
+  - docker run -d -p 127.0.0.1:8080:8080 search-boot:latest /bin/sh -c "curl localhost:8080/app/health"
+  - docker ps -a
+  - docker images
+  - docker tag search-boot:latest $DOCKER_USERNAME/search-boot:${git_sha}
+  - docker push $DOCKER_USERNAME/search-boot:latest
+deploy:
+  provider: script
+  script: docker push $DOCKER_USERNAME/search-boot:${git_sha}
+  on:
+    branch: master
