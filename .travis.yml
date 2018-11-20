@@ -10,9 +10,9 @@ before_script:
   - docker run -d -p 127.0.0.1:8080:8080 search-boot:latest /bin/sh -c "curl localhost:8080/app/health"
   - docker ps -a
   - docker images
-  - docker tag search-boot:latest "$DOCKER_USERNAME"/search-boot:"${TRAVIS_TAG}"
+  - docker tag search-boot:latest "$DOCKER_USERNAME"/search-boot:"$TRAVIS_TAG"
 deploy:
   provider: script
-  script: docker push "$DOCKER_USERNAME"/search-boot:"${TRAVIS_TAG}"
+  script: docker push "$DOCKER_USERNAME"/search-boot:"$TRAVIS_TAG"
   on:
     branch: master
