@@ -18,7 +18,7 @@ before_deploy:
   - docker run -d -p 127.0.0.1:8080:8080 search-boot:latest /bin/sh -c "curl localhost:8080/app/health"
   - docker ps -a
   - docker images
-  - docker tag search-boot:latest $DOCKER_USERNAME/search-boot:${git_sha}
+  - docker tag search-boot:latest $DOCKER_USERNAME/search-boot:"${git_sha}"
 deploy:
   provider: script
   script: docker push $DOCKER_USERNAME/search-boot:${git_sha}
