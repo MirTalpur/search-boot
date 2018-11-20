@@ -4,7 +4,7 @@ language: java
 services:
   - docker
 
-before_deploy:
+before_script:
   - echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USERNAME" --password-stdin
   - docker build -t search-boot:latest .
   - docker run -d -p 127.0.0.1:8080:8080 search-boot:latest /bin/sh -c "curl localhost:8080/app/health"
